@@ -9,15 +9,15 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
-# def paginate_categories(request, category):
-#   page = request.args.get('page', 1, type=int)
-#   start =  (page - 1) * QUESTIONS_PER_PAGE 
-#   end = start + QUESTIONS_PER_PAGE 
+def paginate_questions(request, selection):
+  page = request.args.get('page', 1, type=int)
+  start =  (page - 1) * QUESTIONS_PER_PAGE
+  end = start + QUESTIONS_PER_PAGE
 
-#   questions = [question.format() for question in category]
-#   current_questions = category[start:end]
+  questions = [question.format() for question in selection]
+  current_questions = questions[start:end]
 
-#   return current_questions
+  return current_questions
 
 def create_app(test_config=None):
   # create and configure the app
@@ -48,9 +48,8 @@ def create_app(test_config=None):
   @app.route('/categories')
   def retrieve_categories():
     categories = Category.query.order_by(Category.id).all()
-    print(f'{Fore.GREEN} omggg {categories}')
-    print(f'{Fore.WHITE}')
-
+    # print(f'{Fore.GREEN} omggg {categories}')
+    # print(f'{Fore.WHITE}')
     if len(categories) == 0:
       abort(404)  
     current_categories = [category.format() for category in categories]
@@ -74,6 +73,20 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
+  @app.route('/questions')
+  def retrieve_questions():
+    selection = Question.query.order_by(Question.id).all()
+    current_questions = paginate_questions(request, selection)
+
+    if len(current_questions) == 0:
+      abort(404)  
+      
+    return jsonify({
+      'success': True,
+      'categories': current_questions,
+      'total_questions': len(Question.query.all())
+    })
+
 
   '''
   @TODO: 
