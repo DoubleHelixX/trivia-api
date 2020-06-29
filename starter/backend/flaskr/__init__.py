@@ -45,7 +45,7 @@ def create_app(test_config=None):
   for all available categories.
   '''
   
-  @app.route('/categories')
+  @app.route('/categories', methods=['GET'])
   def retrieve_categories():
     categories = Category.query.order_by(Category.id).all()
     # print(f'{Fore.GREEN} omggg {categories}')
@@ -73,14 +73,14 @@ def create_app(test_config=None):
   ten questions per page and pagination at the bottom of the screen for three pages.
   Clicking on the page numbers should update the questions. 
   '''
-  @app.route('/questions')
+  @app.route('/questions', methods=['GET'])
   def retrieve_questions():
     selection = Question.query.order_by(Question.id).all()
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
       abort(404)  
-      
+     
     return jsonify({
       'success': True,
       'questions': current_questions,
@@ -177,6 +177,8 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
   # done so with last end point - can be done also by creating an endpoint with a search term string passed in the url
+  
+  
   '''
   @TODO: 
   Create a GET endpoint to get questions based on category. 
@@ -185,7 +187,22 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+  @app.route('/questions/<string:category>')
+  def retrieve_category_based_questions(category):
+    selection = Question.query.filter(Question.category == category).order_by(Question.id).all()
+    current_questions = paginate_questions(request, selection)
 
+    if len(current_questions) == 0:
+      abort(404)  
+      
+    return jsonify({
+      'success': True,
+      'questions': current_questions,
+      'total_questions': len(selection)
+    })
+
+
+#could also write this in the first questions get endpoint as a JSON body or as a Args request
 
   '''
   @TODO: 
