@@ -1,9 +1,10 @@
 import os
 from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy 
 from flask_cors import CORS
 import random
 from colorama import Fore , Style
+from sqlalchemy import and_
 
 from models import setup_db, Question, Category
 
@@ -215,6 +216,24 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  
+  @app.route('/questions/quiz')
+  def retrieve_quiz_questions():
+    body = request.get_json()
+    previous_questions = body.get('previous_questions', None)
+    category= body.get('category' , "1")
+
+    selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(Question.id).all()
+    current_questions = paginate_questions(request, selection)
+
+    if len(current_questions) == 0:
+      abort(404)  
+      
+    return jsonify({
+      'success': True,
+      'questions': current_questions,
+      'total_questions': len(selection)
+    })
 
   '''
   @TODO: 
