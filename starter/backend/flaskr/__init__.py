@@ -155,6 +155,28 @@ def create_app(test_config=None):
     except:
       abort(422)
 
+
+  @app.route('/categories', methods=['POST'])
+  def create_categories():
+    body = request.get_json()
+    new_type = body.get('type', None)
+    try:
+      category = Category(type = new_type)
+     
+      category.insert()
+      
+      categories = Category.query.order_by(Category.id).all()
+      current_categories = [category.format() for category in categories]
+    
+      return jsonify({
+      'success': True,
+      'created': category.id,
+      'categories': current_categories,
+      'total_categories': len(Category.query.all())
+      })
+    except:
+      abort(422)
+      
   '''
   @TODO: 
   Create a POST endpoint to get questions based on a search term. 
