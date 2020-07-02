@@ -14,10 +14,9 @@ def paginate_questions(request, selection):
   page = request.args.get('page', 1, type=int)
   start =  (page - 1) * QUESTIONS_PER_PAGE
   end = start + QUESTIONS_PER_PAGE
-
+  
   questions = [question.format() for question in selection]
   current_questions = questions[start:end]
-
   return current_questions
 
 def create_app(test_config=None):
@@ -222,8 +221,10 @@ def create_app(test_config=None):
     body = request.get_json()
     previous_questions = body.get('previous_questions', None)
     category= body.get('category' , "1")
-
-    selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(Question.id).all()
+    if category == 'all':
+      selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(Question.id).all()
+    else: 
+      selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(Question.id).all()
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
