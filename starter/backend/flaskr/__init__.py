@@ -103,7 +103,6 @@ def create_app(test_config=None):
   def delete_question(question_id):
     try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
-
       if question is None:
         abort(404)
       question.delete()
@@ -116,7 +115,6 @@ def create_app(test_config=None):
       'questions': current_questions,
       'total_questions': len(Question.query.all())
       })
-
     except:
       abort(422)
 
@@ -138,34 +136,22 @@ def create_app(test_config=None):
     new_answer = body.get('answer', None)
     new_category = body.get('category', None)
     new_difficulty = body.get('difficulty', None)
-    search = body.get('search', None)
-    
+        
     try:
-      if search:
-        selection = Question.query.order_by(Question.id).filter(Question.question.ilike('%{}%'.format(search)))
-        current_questions = paginate_questions(request, selection)
-
-        return jsonify({
-          'success': True,
-          'questions': current_questions,
-          'total_questions': len(selection.all())
-        })
-
-      else: 
-        question = Question(question=new_question, answer=new_answer, category=new_category, difficulty=new_difficulty)
-        # print(f'{Fore.GREEN} question ', question.category, type(question.difficulty), question.answer, question.question)
-        # print(f'{Fore.WHITE}')
-        question.insert()
-       
-        selection = Question.query.order_by(Question.id).all()
-        current_questions = paginate_questions(request, selection)
+      question = Question(question=new_question, answer=new_answer, category=new_category, difficulty=new_difficulty)
+      # print(f'{Fore.GREEN} question ', question.category, type(question.difficulty), question.answer, question.question)
+      # print(f'{Fore.WHITE}')
+      question.insert()
       
-        return jsonify({
-        'success': True,
-        'created': question.id,
-        'questions': current_questions,
-        'total_questions': len(Question.query.all())
-        })
+      selection = Question.query.order_by(Question.id).all()
+      current_questions = paginate_questions(request, selection)
+    
+      return jsonify({
+      'success': True,
+      'created': question.id,
+      'questions': current_questions,
+      'total_questions': len(Question.query.all())
+      })
     except:
       abort(422)
 
@@ -179,8 +165,30 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  # done so with last end point - can be done also by creating an endpoint with a search term string passed in the url
   
+  @app.route('/questions/search')
+  def retrieve_searched_based_questions():
+    body = request.get_json()
+    search = body.get('search', None)
+    try:
+      if search:
+        selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
+        current_questions = paginate_questions(request, selection)
+        
+        if len(current_questions) == 0:
+          abort(404) 
+
+        return jsonify({
+          'success': True,
+          'questions': current_questions,
+          'total_questions': len(selection.all())
+        })
+      else:
+        abort(404)
+    except expression as identifier:
+      abort(422)
+    
+  # done so with last end point - can be done also by creating an endpoint with a search term string passed in the url
   
   '''
   @TODO: 
