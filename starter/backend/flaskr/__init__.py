@@ -5,6 +5,7 @@ from flask_cors import CORS
 import random
 from colorama import Fore , Style
 from sqlalchemy import and_
+from sqlalchemy.sql import func
 
 from models import setup_db, Question, Category
 
@@ -22,7 +23,9 @@ def paginate_questions(request, selection):
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
-  setup_db(app)
+  configedDB = setup_db(app)
+  if not configedDB:
+    abort(500)
   
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -222,9 +225,9 @@ def create_app(test_config=None):
     previous_questions = body.get('previous_questions', None)
     category= body.get('category' , "1")
     if category == 'all':
-      selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(Question.id).all()
+      selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).all()
     else: 
-      selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(Question.id).all()
+      selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(func.random()).all()
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
@@ -264,6 +267,15 @@ def create_app(test_config=None):
       "error": 400,
       "message": "bad request"
       }), 400
+  return app
+
+  @app.errorhandler(500)
+  def server_error(error):
+    return jsonify({
+      "success": False, 
+      "error": 500,
+      "message": "Something is wrong with the server configuration"
+      }), 500
   return app
 
     
