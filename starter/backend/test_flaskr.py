@@ -52,13 +52,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_categories'])
         self.assertTrue(len(data['categories']))
     
-    # def test_404_sent_requesting_beyond_valid_page(self):
-    #     res = self.client().get('/questions?page=1000', json={'difficulty': 1})
-    #     data = json.loads(res.data)
+    def test_404_sent_requesting_beyond_valid_page(self):
+        #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
+        res = self.client().get('/questions?page=1000')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 404)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'resource not found')
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
     
     # # @TODO: Write tests for search - at minimum two
     # #        that check a response when there are results and when there are none
