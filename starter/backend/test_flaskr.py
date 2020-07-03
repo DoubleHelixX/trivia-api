@@ -87,30 +87,36 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(category.format()['question'], "Is an egg a egg?")
         self.assertEqual(Category.format()['answer'], "yes")
         self.assertEqual(Category.format()['category'], "4")
-        self.assertEqual(Category.format()['difficulty'], 9) """
+        self.assertEqual(Category.format()['difficulty'], 9)
         
+    def test_400_for_failed_update_questions(self):
+        res = self.client().patch('/questions/5')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'bad request')
         
+    def test_400_for_failed_update_categories(self):
+        res = self.client().patch('/categories/5')
+        data = json.loads(res.data)
 
-    # def test_400_for_failed_update(self):
-    #     res = self.client().patch('/books/5')
-    #     data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'bad request') """
+        
+    def test_delete_question(self):
+        res = self.client().delete('/questions/5')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 400)
-    #     self.assertEqual(data['success'], False)
-    #     self.assertEqual(data['message'], 'bad request')
-    
-    # def test_delete_book(self):
-    #     res = self.client().delete('/books/6')
-    #     data = json.loads(res.data)
+        question = Question.query.filter(Question.id == 5).one_or_none()
 
-    #     book = Book.query.filter(Book.id == 6).one_or_none()
-
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(data['deleted'], 6)
-    #     self.assertTrue(data['total_books'])
-    #     self.assertTrue(len(data['books']))
-    #     self.assertEqual(book, None)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], 5)
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['total_questions'])
+        self.assertEqual(question, None)
         
 
     # def test_404_if_book_does_not_exist(self):
