@@ -29,6 +29,7 @@ CREATE TABLE public.categories (
     type text
 );
 
+ALTER TABLE public.categories alter column type set NOT NULL;
 
 ALTER TABLE public.categories OWNER TO caryn;
 
@@ -66,6 +67,12 @@ CREATE TABLE public.questions (
     category integer
 );
 
+ALTER TABLE public.questions alter column question set NOT NULL;
+ALTER TABLE public.questions alter column answer set NOT NULL;
+ALTER TABLE public.questions alter column category set NOT NULL;
+
+
+ALTER TABLE public.questions alter column difficulty set default 1;
 
 ALTER TABLE public.questions OWNER TO caryn;
 
