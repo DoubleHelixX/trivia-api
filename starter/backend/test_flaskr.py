@@ -25,6 +25,8 @@ class TriviaTestCase(unittest.TestCase):
             "category" : "3", 
             'difficulty': 5
         }
+        
+        
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -124,7 +126,7 @@ class TriviaTestCase(unittest.TestCase):
     #     self.assertTrue(data['total_questions'])
     #     self.assertEqual(question, None)
         
-    def test_422_if_question_does_not_exist(self):
+    def test_422_if_question_to_delete_does_not_exist(self):
         res = self.client().delete('/questions/1000')
         data = json.loads(res.data)
 
@@ -135,12 +137,22 @@ class TriviaTestCase(unittest.TestCase):
     def test_create_new_question(self):
         res = self.client().post('/questions', json=self.new_question)
         data = json.loads(res.data)
-        pass
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['created'])
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['total_questions'])
+        
     
-    # def test_422_if_book_creation_fails(self):
-    #     res = self.client().post('/books', json=self.new_book)
-    #     data = json.loads(res.data)
-    #     pass
+    def test_422_if_question_creation_fails(self):
+        res = self.client().post('/questions', json={})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable')
     
     # def test_get_book_search_with_results(self):
     #     res = self.client().post('/books', json={'search': 'Novel'})
