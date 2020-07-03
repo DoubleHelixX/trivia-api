@@ -61,17 +61,34 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
     
-    # # @TODO: Write tests for search - at minimum two
-    # #        that check a response when there are results and when there are none
+    # # @TODO: Write tests for search - at minimum two - that check a response when there are results and when there are none
+   
+   
+   
+   # # @TODO: Implement functions on init - app py file.
+   
+    #Test for updating databases
+    """ def test_update_category_type(self):
+        res = self.client().patch('/categories/5', json={'type': "Laughables"})
+        data = json.loads(res.data)
+        category = Category.query.filter(Category.type == "Laughables").one_or_none()
 
-    # def test_update_book_rating(self):
-    #     res = self.client().patch('/books/5', json={'rating': 1})
-    #     data = json.loads(res.data)
-    #     book = Book.query.filter(Book.id == 5).one_or_none()
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(Category.format()['type'], "Laughables")
+    
+     def test_update_question_fields(self):
+        res = self.client().patch('/questions/5', json={'question': 'Is an egg a egg?', 'answer':'yes' , 'category':'4', 'difficulty':9})
+        data = json.loads(res.data)
+        category = Question.query.filter(Question.question == "Is an egg a egg?").one_or_none()
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data['success'], True)
-    #     self.assertEqual(book.format()['rating'], 1)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(category.format()['question'], "Is an egg a egg?")
+        self.assertEqual(Category.format()['answer'], "yes")
+        self.assertEqual(Category.format()['category'], "4")
+        self.assertEqual(Category.format()['difficulty'], 9) """
+        
         
 
     # def test_400_for_failed_update(self):
