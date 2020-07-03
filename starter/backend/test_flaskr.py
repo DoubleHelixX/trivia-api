@@ -105,20 +105,20 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'bad request') """
         
-    def test_delete_question(self):
-        res = self.client().delete('/questions/5')
-        data = json.loads(res.data)
+    # def test_delete_question(self):
+    #     res = self.client().delete('/questions/5')
+    #     data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == 5).one_or_none()
+    #     question = Question.query.filter(Question.id == 5).one_or_none()
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['deleted'], 5)
-        self.assertTrue(data['questions'])
-        self.assertTrue(data['total_questions'])
-        self.assertEqual(question, None)
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertEqual(data['deleted'], 5)
+    #     self.assertTrue(data['questions'])
+    #     self.assertTrue(data['total_questions'])
+    #     self.assertEqual(question, None)
         
-    def test_404_if_question_does_not_exist(self):
+    def test_422_if_question_does_not_exist(self):
         res = self.client().delete('/questions/1000')
         data = json.loads(res.data)
 
@@ -126,7 +126,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
     
-    # def test_create_new_book(self):
+    # def test_create_new_question(self):
     #     res = self.client().post('/books', json=self.new_book)
     #     data = json.loads(res.data)
     #     pass
