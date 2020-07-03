@@ -144,7 +144,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
         
-    
     def test_422_if_question_creation_fails(self):
         res = self.client().post('/questions', json={"difficulty":[1,2,3]})
         data = json.loads(res.data)
@@ -152,6 +151,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
+        
+    def test_405_if_question_creation_not_allowed(self):
+        res = self.client().post('/questions/1000', json=self.new_question)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
     
     # def test_get_book_search_with_results(self):
     #     res = self.client().post('/books', json={'search': 'Novel'})
