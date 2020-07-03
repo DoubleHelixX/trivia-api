@@ -10,6 +10,7 @@ from sqlalchemy.sql import func
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
+CATEGORIES_PER_PAGE = 8
 
 def paginate_questions(request, selection):
   page = request.args.get('page', 1, type=int)
@@ -22,8 +23,8 @@ def paginate_questions(request, selection):
 
 def paginate_categories(request, selection):
   page = request.args.get('page', 1, type=int)
-  start =  (page - 1) * QUESTIONS_PER_PAGE
-  end = start + QUESTIONS_PER_PAGE
+  start =  (page - 1) * CATEGORIES_PER_PAGE
+  end = start + CATEGORIES_PER_PAGE
   
   categories = [category.format() for category in selection]
   current_categories = categories[start:end]
@@ -202,23 +203,20 @@ def create_app(test_config=None):
   def retrieve_searched_based_questions():
     body = request.get_json()
     search = body.get('search', None)
-    try:
-      if search:
-        selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
-        current_questions = paginate_questions(request, selection)
-        
-        if len(current_questions) == 0:
-          abort(404) 
+  
+    selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
+    current_questions = paginate_questions(request, selection)
 
-        return jsonify({
-          'success': True,
-          'questions': current_questions,
-          'total_questions': len(selection.all())
-        })
-      else:
-        abort(404)
-    except expression as identifier:
-      abort(422)
+    if (len(selection.all()) !=0 and len(current_questions) == 0):
+      abort(404) 
+  
+    return jsonify({
+      'success': True,
+      'questions': current_questions,
+      'total_questions': len(selection.all())
+    })
+    
+
     
   # done so with last end point - can be done also by creating an endpoint with a search term string passed in the url
   
