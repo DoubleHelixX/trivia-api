@@ -19,6 +19,12 @@ class TriviaTestCase(unittest.TestCase):
 
         setup_db(self.app, self.database_path)
 
+        self.new_question = {
+            'question': 'How much wood can a wood chuck chuck?',
+            'answer': 'depends on his dentist bill',
+            "category" : "3", 
+            'difficulty': 5
+        }
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -126,10 +132,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
     
-    # def test_create_new_question(self):
-    #     res = self.client().post('/books', json=self.new_book)
-    #     data = json.loads(res.data)
-    #     pass
+    def test_create_new_question(self):
+        res = self.client().post('/questions', json=self.new_question)
+        data = json.loads(res.data)
+        pass
     
     # def test_422_if_book_creation_fails(self):
     #     res = self.client().post('/books', json=self.new_book)
