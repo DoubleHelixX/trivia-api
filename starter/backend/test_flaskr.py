@@ -146,10 +146,9 @@ class TriviaTestCase(unittest.TestCase):
         
     
     def test_422_if_question_creation_fails(self):
-        res = self.client().post('/questions', json={})
+        res = self.client().post('/questions', json={"difficulty":[1,2,3]})
         data = json.loads(res.data)
         
-        self.assertEqual(res.status_code, 422)
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
