@@ -20,6 +20,15 @@ def paginate_questions(request, selection):
   current_questions = questions[start:end]
   return current_questions
 
+def paginate_categories(request, selection):
+  page = request.args.get('page', 1, type=int)
+  start =  (page - 1) * QUESTIONS_PER_PAGE
+  end = start + QUESTIONS_PER_PAGE
+  
+  categories = [category.format() for category in selection]
+  current_categories = categories[start:end]
+  return current_categories
+
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
@@ -50,12 +59,13 @@ def create_app(test_config=None):
   
   @app.route('/categories', methods=['GET'])
   def retrieve_categories():
-    categories = Category.query.order_by(Category.id).all()
+    selection = Category.query.order_by(Category.id).all()
     # print(f'{Fore.GREEN} omggg {categories}')
     # print(f'{Fore.WHITE}')
-    if len(categories) == 0:
+    current_categories = paginate_categories(request, selection)
+    if len(current_categories) == 0:
       abort(404)  
-    current_categories = [category.format() for category in categories]
+
     return jsonify({
       'success': True,
       'categories': current_categories,
@@ -165,8 +175,10 @@ def create_app(test_config=None):
      
       category.insert()
       
-      categories = Category.query.order_by(Category.id).all()
-      current_categories = [category.format() for category in categories]
+      selection = Category.query.order_by(Category.id).all()
+      current_categories = paginate_categories(request, selection)
+      if len(current_categories) == 0:
+        abort(404) 
     
       return jsonify({
       'success': True,
