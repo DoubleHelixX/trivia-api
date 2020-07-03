@@ -31,10 +31,10 @@ class Question(db.Model):
   __tablename__ = 'questions'
 
   id = Column(Integer, primary_key=True)
-  question = Column(String)
-  answer = Column(String)
-  category = Column(String)
-  difficulty = Column(Integer)
+  question = Column(String, nullable=False)
+  answer = Column(String, nullable=False)
+  category = Column(String, nullable=False)
+  difficulty = Column(Integer, default = 1)
 
   def __init__(self, question, answer, category, difficulty):
     self.question = question
@@ -71,7 +71,7 @@ class Category(db.Model):
   __tablename__ = 'categories'
 
   id = Column(Integer, primary_key=True)
-  type = Column(String)
+  type = Column(String, nullable=False)
 
   def __init__(self, type):
     self.type = type

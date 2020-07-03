@@ -25,6 +25,9 @@ class TriviaTestCase(unittest.TestCase):
             "category" : "3", 
             'difficulty': 5
         }
+        self.new_category = {
+            'type' : "Animals"
+        }
         
         
         # binds the app to the current context
@@ -152,8 +155,35 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
         
-    def test_405_if_question_creation_not_allowed(self):
+    def test_405_if_question_creation_method_not_allowed(self):
         res = self.client().post('/questions/1000', json=self.new_question)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
+        
+    def test_create_new_category(self):
+        res = self.client().post('/categories', json=self.new_category)
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['created'])
+        self.assertTrue(data['categories'])
+        self.assertTrue(data['total_categories'])
+        
+    def test_422_if_category_creation_fails(self):
+        res = self.client().post('/categories', json={'empty':0})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable')
+        
+    #NOT WORKING - RETURNS 404 FOR SOME REASON
+    def test_405_if_categories_creation_method_not_allowed(self):
+        res = self.client().post('/categories/10000', json=self.new_category)
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 405)
