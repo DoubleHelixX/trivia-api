@@ -260,9 +260,11 @@ def create_app(test_config=None):
   
   @app.route('/questions/quiz')
   def retrieve_quiz_questions():
+    
     body = request.get_json()
-    previous_questions = body.get('previous_questions', None)
+    previous_questions = body.get('previous_questions', [])
     category= body.get('category' , "1")
+    
     if category == 'all':
       selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).all()
     else: 
@@ -270,14 +272,18 @@ def create_app(test_config=None):
     
     if not selection: abort(422)
     
+    for q in selection:
+      previous_questions.append(q.id)
+    
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
       abort(404)  
-      
+    
     return jsonify({
       'success': True,
       'questions': current_questions,
+      'previous_questions':previous_questions,
       'total_questions': len(selection)
     })
 
