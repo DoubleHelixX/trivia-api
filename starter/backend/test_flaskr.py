@@ -293,6 +293,54 @@ class TriviaTestCase(unittest.TestCase):
     ## * ----- END OF TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
     
 
+    ## * ----- TESTING GET QUESTION QUIZ ROUTE ----- *
+    
+    def test_200_get_quiz_questions_specific_category(self):
+        res = self.client().get('/questions/quiz', json = {'category': '5'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['questions']))
+        self.assertEqual(data['total_questions'], 3)
+        
+    # def test_404_sent_requesting_beyond_valid_page_quiz_questions_specific_category(self):
+    #     #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
+    #     res = self.client().get('/questions/quiz?page=1000', json={'category': '5'})
+    #     data = json.loads(res.data)
+
+    #     self.assertEqual(res.status_code, 404)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'resource or url not found')
+        
+    # def test_200_get_quiz_questions_all_categories(self):
+    #     res = self.client().get('/questions/quiz', json = {'category': 'all'})
+    #     data = json.loads(res.data)
+
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertTrue(len(data['questions']))
+    #     self.assertEqual(data['total_questions'], 65)
+
+    # def test_404_sent_requesting_beyond_valid_page_quiz_questions_all_categories(self):
+    #     #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
+    #     res = self.client().get('/questions/quiz?page=1000', json={'category': 'all'})
+    #     data = json.loads(res.data)
+
+    #     self.assertEqual(res.status_code, 404)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'resource or url not found')
+        
+    # def test_422_invalid_category_based_question(self):
+    #     res = self.client().get('/questions/quiz', json={'category': '1000'})
+    #     data = json.loads(res.data)
+
+    #     self.assertEqual(res.status_code, 422)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'unprocessable')
+            
+        
+    ## * ----- END OFTESTING GET QUESTION QUIZ ROUTE ----- *
 
 
 # Make the tests conveniently executable

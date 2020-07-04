@@ -267,6 +267,9 @@ def create_app(test_config=None):
       selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).all()
     else: 
       selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(func.random()).all()
+    
+    if not selection: abort(422)
+    
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
