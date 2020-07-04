@@ -64,6 +64,7 @@ class TriviaTestCase(unittest.TestCase):
     #     self.assertEqual(res.status_code, 404)
     #     self.assertEqual(data['success'], False)
     #     self.assertEqual(data['message'], 'resource or url not found')
+    
     ## * ----- END OF TESTING PAGINATION ON QUESTION ROUTE ----- *
     
     
@@ -263,31 +264,31 @@ class TriviaTestCase(unittest.TestCase):
 
     ## * ----- TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
     
-    def test_200_get_category_based_question(self):
-        res = self.client().get('/questions/search', json={'search': 'title'})
-        data = json.loads(res.data)
+    # def test_200_get_category_based_question(self):
+    #     res = self.client().get('/questions/categories/5')
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertTrue(data['total_questions'])
-        self.assertEqual(len(data['questions']), 2)
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertTrue(len(data['questions']))
+    #     self.assertEqual(data['total_questions'], 3)
 
-    def test_200_get_category_based_question_search_without_results(self):
-        res = self.client().get('/questions/search', json={'search': 'applejacks'})
-        data = json.loads(res.data)
+    # def test_404_sent_requesting_beyond_valid_page_category_based_questions(self):
+    #     #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
+    #     res = self.client().get('/questions/categories/5?page=1000')
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['total_questions'], 0)
-        self.assertEqual(len(data['questions']), 0)
+    #     self.assertEqual(res.status_code, 404)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'resource or url not found')
         
-    def test_200_get_category_based_question_search_without_JSON_body(self):
-        res = self.client().get('/questions/search')
-        data = json.loads(res.data)
+    # def test_422_invalid_category_based_question(self):
+    #     res = self.client().get('/questions/categories/1000')
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unprocessable')
+    #     self.assertEqual(res.status_code, 422)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'unprocessable')
     
     ## * ----- END OF TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
     

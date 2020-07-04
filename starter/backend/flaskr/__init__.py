@@ -73,8 +73,6 @@ def create_app(test_config=None):
       'total_categories': len(Category.query.all())
     })
 
-
-
   '''
   @TODO: 
   Create an endpoint to handle GET requests for questions, 
@@ -228,11 +226,16 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
-  @app.route('/questions/<string:category>')
+  #could also write this in the first questions get endpoint as a JSON body or as a Args request
+  @app.route('/questions/categories/<string:category>')
   def retrieve_category_based_questions(category):
-    selection = Question.query.filter(Question.category == category).order_by(Question.id).all()
+   
+    selection = Question.query.filter(Question.category == category).order_by(Question.id).all()     
+    
+    if not selection: abort(422)
+    
     current_questions = paginate_questions(request, selection)
-
+    
     if len(current_questions) == 0:
       abort(404)  
       
@@ -241,9 +244,7 @@ def create_app(test_config=None):
       'questions': current_questions,
       'total_questions': len(selection)
     })
-
-
-#could also write this in the first questions get endpoint as a JSON body or as a Args request
+    
 
   '''
   @TODO: 
