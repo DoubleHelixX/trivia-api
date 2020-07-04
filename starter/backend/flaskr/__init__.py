@@ -195,7 +195,7 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
   
-  @app.route('/questions/search')
+  @app.route('/questions/search', methods=['GET'])
   def retrieve_searched_based_questions():
     try:
       body = request.get_json()
@@ -227,7 +227,7 @@ def create_app(test_config=None):
   category to be shown. 
   '''
   #could also write this in the first questions get endpoint as a JSON body or as a Args request
-  @app.route('/questions/categories/<string:category>')
+  @app.route('/questions/categories/<string:category>', methods=['GET'])
   def retrieve_category_based_questions(category):
    
     selection = Question.query.filter(Question.category == category).order_by(Question.id).all()     
@@ -258,7 +258,7 @@ def create_app(test_config=None):
   and shown whether they were correct or not. 
   '''
   
-  @app.route('/questions/quiz')
+  @app.route('/questions/quiz', methods=['GET'])
   def retrieve_quiz_questions():
     
     body = request.get_json()
