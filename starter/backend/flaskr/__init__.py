@@ -152,9 +152,9 @@ def create_app(test_config=None):
       # print(f'{Fore.WHITE}')
       question.insert()
       
-      selection = Question.query.order_by(Question.id).all()
-      current_questions = paginate_questions(request, selection)
-    
+      questions = Question.query.order_by(Question.id).all()
+      current_questions = [question.format() for question in questions]
+
       return jsonify({
       'success': True,
       'created': question.id,
@@ -174,11 +174,9 @@ def create_app(test_config=None):
      
       category.insert()
       
-      selection = Category.query.order_by(Category.id).all()
-      current_categories = paginate_categories(request, selection)
-      if len(current_categories) == 0:
-        abort(404) 
-    
+      categories = Category.query.order_by(Category.id).all()
+      current_categories = [category.format() for category in categories]
+
       return jsonify({
       'success': True,
       'created': category.id,
@@ -201,22 +199,24 @@ def create_app(test_config=None):
   
   @app.route('/questions/search')
   def retrieve_searched_based_questions():
-    body = request.get_json()
-    search = body.get('search', None)
-  
-    selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
-    current_questions = paginate_questions(request, selection)
+    try:
+      body = request.get_json()
+      search = body.get('search', None)
+      
+      selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
+      current_questions = paginate_questions(request, selection)
 
-    if (len(selection.all()) !=0 and len(current_questions) == 0):
-      abort(404) 
-  
-    return jsonify({
-      'success': True,
-      'questions': current_questions,
-      'total_questions': len(selection.all())
-    })
+      if (len(selection.all()) !=0 and len(current_questions) == 0):
+        abort(404) 
     
-
+      return jsonify({
+        'success': True,
+        'questions': current_questions,
+        'total_questions': len(selection.all())
+      })
+    except:
+      abort(422)
+    
     
   # done so with last end point - can be done also by creating an endpoint with a search term string passed in the url
   
@@ -287,7 +287,7 @@ def create_app(test_config=None):
     return jsonify({
       "success": False, 
       "error": 404,
-      "message": "resource not found"
+      "message": "resource or url not found"
       }), 404
 
   @app.errorhandler(422)
