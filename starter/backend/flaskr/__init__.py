@@ -61,8 +61,7 @@ def create_app(test_config=None):
   @app.route('/categories', methods=['GET'])
   def retrieve_categories():
     categories = Category.query.order_by(Category.id).all()
-    # print(f'{Fore.GREEN} omggg {categories}')
-    # print(f'{Fore.WHITE}')
+   
     current_categories = {cat.id:cat.type for cat in categories}
     if len(current_categories) == 0:
       abort(404)  
@@ -92,7 +91,7 @@ def create_app(test_config=None):
     randomCategory = str( random.randint(1, len(categories)))
     questions = Question.query.order_by(Question.id).all()
     
-    #?RANDOM FUNCTIONALITY FOR QUESTIONS VIEW
+    #* - OPTIONAL - RANDOM FUNCTIONALITY FOR QUESTIONS VIEW  - RANDOMIZES QUESTIONS ON REFRESH
     #questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
     #questions = Question.query.order_by(func.random()).all()
     
@@ -101,12 +100,16 @@ def create_app(test_config=None):
     if len(current_questions)==0:
       abort(404)  
     
+    for category in categories:
+       if category.id==questions[0].category:
+        currentCategory = category.type 
+         
     return jsonify({
       'success': True,
       'questions': current_questions,
       'total_questions': len(questions),
       'categories': types,
-      'currentCategory': questions[0].category
+      'currentCategory': currentCategory
     })
 
 
@@ -172,27 +175,29 @@ def create_app(test_config=None):
     except:
       abort(422)
 
+ ## ! ---------- OPTIONAL CREATE CATAGORY METHOD ----------DON'T TOUCH
 
-  @app.route('/categories', methods=['POST'])
-  def create_categories():
-    body = request.get_json()
-    new_type = body.get('type', None)
-    try:
-      category = Category(type = new_type)
+  # @app.route('/categories', methods=['POST'])
+  # def create_categories():
+  #   body = request.get_json()
+  #   new_type = body.get('type', None)
+  #   try:
+  #     category = Category(type = new_type)
      
-      category.insert()
+  #     category.insert()
       
-      categories = Category.query.order_by(Category.id).all()
-      current_categories = {cat.id:cat.type for cat in categories}
+  #     categories = Category.query.order_by(Category.id).all()
+  #     current_categories = {cat.id:cat.type for cat in categories}
 
-      return jsonify({
-      'success': True,
-      'created': category.id,
-      'categories': current_categories,
-      'total_categories': len(Category.query.all())
-      })
-    except:
-      abort(422)
+  #     return jsonify({
+  #     'success': True,
+  #     'created': category.id,
+  #     'categories': current_categories,
+  #     'total_categories': len(Category.query.all())
+  #     })
+  #   except:
+  #     abort(422) 
+ 
       
   '''
   @TODO: 
@@ -276,8 +281,8 @@ def create_app(test_config=None):
     
     body = request.get_json()
     previous_questions = body.get('previous_questions', [])
-    category= body.get('quiz_category' , 1)
-    #print('PQ: ', previous_questions, 'C: ', category)
+    category= body.get('quiz_category' , {"type": "click", "id" : 0})
+    #print('PQ: ', previous_questions, 'C: ', category) #! Troubleshooting code
     
 
     if category["id"] == 0:
@@ -287,11 +292,12 @@ def create_app(test_config=None):
     
     if len(questions) == 0: 
       question = 0
+    if len(questions) == 0 and len(previous_questions) == 0:
+      abort(422)
     else:
-      #print('questions before format: ' , questions, 'length of questions: ', len(questions))
-      
+      #print('questions before format: ' , questions, 'length of questions: ', len(questions)) #! Troubleshooting code
       question = questions[0].format()
-      #print('length of question', len(question), ' question contents: ' , question, ' question ID: ' , question['id'])
+      #print('length of question', len(question), ' question contents: ' , question, ' question ID: ' , question['id']) #! Troubleshooting code
       previous_questions.append(question['id'])
       
     return jsonify({
