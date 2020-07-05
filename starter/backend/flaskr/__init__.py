@@ -90,8 +90,12 @@ def create_app(test_config=None):
     categories = Category.query.order_by(Category.id).all()
     types = {cat.id:cat.type for cat in categories}
     randomCategory = str( random.randint(1, len(categories)))
-    questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
-    #questions = Question.query.order_by(Question.id).all()
+    questions = Question.query.order_by(Question.id).all()
+    
+    #?RANDOM FUNCTIONALITY FOR QUESTIONS VIEW
+    #questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
+    #questions = Question.query.order_by(func.random()).all()
+    
     current_questions = paginate_questions(request, questions)
     
     if len(current_questions)==0:
@@ -201,7 +205,7 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
   
-  @app.route('/questions', methods=['POST'])
+  @app.route('/questions/search', methods=['POST'])
   def retrieve_searched_based_questions():
     try:
       body = request.get_json()
@@ -211,7 +215,6 @@ def create_app(test_config=None):
       current_questions = paginate_questions(request, selection)
       
       if (len(selection.all()) !=0 and len(current_questions) == 0):
-        print(selection.all() , '|||' , len(current_questions))
         abort(404) 
       
       return jsonify({
