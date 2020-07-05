@@ -270,33 +270,28 @@ def create_app(test_config=None):
   and shown whether they were correct or not. 
   '''
   
-  @app.route('/questions/quiz', methods=['GET'])
+  @app.route('/questions/quiz', methods=['POST'])
   def retrieve_quiz_questions():
     
     body = request.get_json()
     previous_questions = body.get('previous_questions', [])
-    category= body.get('category' , "1")
-    
-    if category == 'all':
-      selection = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).all()
-    else: 
-      selection = Question.query.filter(and_(Question.category == category , Question.id.notin_(question for question in previous_questions))).order_by(func.random()).all()
-    
-    if not selection: abort(422)
-    
-    for q in selection:
-      previous_questions.append(q.id)
-    
-    current_questions = paginate_questions(request, selection)
+    category= body.get('quiz_category' , "1")
 
-    if len(current_questions) == 0:
-      abort(404)  
+    if category["id"] == 0:
+      question = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).one_or_none()
+    else: 
+      question = Question.query.filter(and_(Question.category == category["id"], Question.id.notin_(question for question in previous_questions))).order_by(func.random()).one_or_none()
     
+    if not questions: abort(422)
+ 
+    print(question)
+    question = question.format()
+    previous_questions.append(question['id'])
     return jsonify({
       'success': True,
-      'questions': current_questions,
+      'question': question,
       'previous_questions':previous_questions,
-      'total_questions': len(selection)
+      'total_questions': len(questions)
     })
 
   '''
