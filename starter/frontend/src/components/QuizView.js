@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 import '../stylesheets/QuizView.css';
 
-const questionsPerPlay = 5; 
+const questionsPerPlay = 8; 
 
 class QuizView extends Component {
   constructor(props){
@@ -63,7 +63,7 @@ class QuizView extends Component {
       success: (result) => {
         this.setState({
           showAnswer: false,
-          previousQuestions: result.previous_questions,
+          previousQuestions: previousQuestions,
           currentQuestion: result.question,
           guess: '',
           forceEnd: result.question ? false : true

@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
-CATEGORIES_PER_PAGE = 8
+CATEGORIES_PER_PAGE = 10
 
 def paginate_questions(request, selection):
   page = request.args.get('page', 1, type=int)
@@ -275,18 +275,24 @@ def create_app(test_config=None):
     
     body = request.get_json()
     previous_questions = body.get('previous_questions', [])
-    category= body.get('quiz_category' , "1")
+    category= body.get('quiz_category' , 1)
+    #print('PQ: ', previous_questions, 'C: ', category)
+    
 
     if category["id"] == 0:
-      question = Question.query.filter(Question.id.notin_(question for question in previous_questions)).order_by(func.random()).one_or_none()
+      questions = Question.query.filter(Question.id.notin_(q for q in previous_questions)).order_by(func.random()).all()
     else: 
-      question = Question.query.filter(and_(Question.category == category["id"], Question.id.notin_(question for question in previous_questions))).order_by(func.random()).one_or_none()
+      questions = Question.query.filter(and_(Question.category == category["id"], Question.id.notin_(q for q in previous_questions))).order_by(func.random()).all()
     
-    if not questions: abort(422)
- 
-    print(question)
-    question = question.format()
-    previous_questions.append(question['id'])
+    if len(questions) == 0: 
+      question = 0
+    else:
+      #print('questions before format: ' , questions, 'length of questions: ', len(questions))
+      
+      question = questions[0].format()
+      #print('length of question', len(question), ' question contents: ' , question, ' question ID: ' , question['id'])
+      previous_questions.append(question['id'])
+      
     return jsonify({
       'success': True,
       'question': question,
