@@ -40,7 +40,7 @@ def create_app(test_config=None):
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
-  CORS(app)
+  CORS(app, resources={r"/api/*": {"origins": "*"}})
   
 
   '''
@@ -87,16 +87,22 @@ def create_app(test_config=None):
   '''
   @app.route('/questions', methods=['GET'])
   def retrieve_questions():
-    selection = Question.query.order_by(Question.id).all()
-    current_questions = paginate_questions(request, selection)
-
-    if len(current_questions) == 0:
-      abort(404)  
+    questions = Question.query.order_by(Question.id).all()
+    current_questions = paginate_questions(request, questions)
+    categories = Category.query.order_by(Category.id).all()
+    types =[]
+    for c in categories:
+      types.append(c.type)
      
+    if len(current_questions)==0:
+      abort(404)  
+    
     return jsonify({
       'success': True,
       'questions': current_questions,
-      'total_questions': len(Question.query.all())
+      'total_questions': len(Question.query.all()),
+      'categories': types,
+      'currentCategory': "afijaoijfdsoifjs"
     })
 
 
@@ -227,9 +233,9 @@ def create_app(test_config=None):
   category to be shown. 
   '''
   #could also write this in the first questions get endpoint as a JSON body or as a Args request
-  @app.route('/questions/categories/<string:category>', methods=['GET'])
+  @app.route('/categories/<string:category>/questions', methods=['GET'])
   def retrieve_category_based_questions(category):
-   
+  
     selection = Question.query.filter(Question.category == category).order_by(Question.id).all()     
     
     if not selection: abort(422)
@@ -242,7 +248,8 @@ def create_app(test_config=None):
     return jsonify({
       'success': True,
       'questions': current_questions,
-      'total_questions': len(selection)
+      'total_questions': len(selection),
+      'current_category': selection[0].category
     })
     
 
