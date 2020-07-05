@@ -87,22 +87,23 @@ def create_app(test_config=None):
   '''
   @app.route('/questions', methods=['GET'])
   def retrieve_questions():
-    questions = Question.query.order_by(Question.id).all()
-    current_questions = paginate_questions(request, questions)
     categories = Category.query.order_by(Category.id).all()
     types =[]
     for c in categories:
       types.append(c.type)
-     
+    randomCategory = str( random.randint(1, len(categories)))
+    questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
+    current_questions = paginate_questions(request, questions)
+    
     if len(current_questions)==0:
       abort(404)  
     
     return jsonify({
       'success': True,
       'questions': current_questions,
-      'total_questions': len(Question.query.all()),
+      'total_questions': len(questions),
       'categories': types,
-      'currentCategory': "afijaoijfdsoifjs"
+      'currentCategory': 'Science'
     })
 
 
