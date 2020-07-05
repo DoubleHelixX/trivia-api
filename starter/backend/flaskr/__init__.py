@@ -60,10 +60,10 @@ def create_app(test_config=None):
   
   @app.route('/categories', methods=['GET'])
   def retrieve_categories():
-    selection = Category.query.order_by(Category.id).all()
+    categories = Category.query.order_by(Category.id).all()
     # print(f'{Fore.GREEN} omggg {categories}')
     # print(f'{Fore.WHITE}')
-    current_categories = paginate_categories(request, selection)
+    current_categories = {cat.id:cat.type for cat in categories}
     if len(current_categories) == 0:
       abort(404)  
 
@@ -91,6 +91,7 @@ def create_app(test_config=None):
     types = {cat.id:cat.type for cat in categories}
     randomCategory = str( random.randint(1, len(categories)))
     questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
+    #questions = Question.query.order_by(Question.id).all()
     current_questions = paginate_questions(request, questions)
     
     if len(current_questions)==0:
@@ -178,7 +179,7 @@ def create_app(test_config=None):
       category.insert()
       
       categories = Category.query.order_by(Category.id).all()
-      current_categories = [category.format() for category in categories]
+      current_categories = {cat.id:cat.type for cat in categories}
 
       return jsonify({
       'success': True,
@@ -200,16 +201,17 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
   
-  @app.route('/questions/search', methods=['POST'])
+  @app.route('/questions', methods=['POST'])
   def retrieve_searched_based_questions():
     try:
       body = request.get_json()
       search = body.get('searchTerm', None)
-      
+      print('omgassas')
       selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
       current_questions = paginate_questions(request, selection)
       
       if (len(selection.all()) !=0 and len(current_questions) == 0):
+        print(selection.all() , '|||' , len(current_questions))
         abort(404) 
       
       return jsonify({
