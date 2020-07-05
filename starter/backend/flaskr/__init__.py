@@ -210,7 +210,6 @@ def create_app(test_config=None):
     try:
       body = request.get_json()
       search = body.get('searchTerm', None)
-      print('omgassas')
       selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
       current_questions = paginate_questions(request, selection)
       
@@ -243,7 +242,9 @@ def create_app(test_config=None):
     #category_id= int(category_id)+1
     selection = Question.query.filter(Question.category == category_id).order_by(Question.id).all()     
     
-    if not selection: abort(422)
+    if not len(selection): 
+      print(len(selection))
+      abort(422)
     
     current_questions = paginate_questions(request, selection)
     

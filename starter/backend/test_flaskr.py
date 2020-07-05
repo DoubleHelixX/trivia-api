@@ -55,6 +55,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_questions'])
         self.assertTrue(len(data['questions']))
+        self.assertTrue(data['categories'])
+        self.assertEqual(len(data['currentCategory']), 1)
     
     def test_404_sent_requesting_beyond_valid_page_questions(self):
         #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
@@ -91,7 +93,7 @@ class TriviaTestCase(unittest.TestCase):
     # * ----- END OF TESTING PAGINATION ON CATEGORIES ROUTE ----- *
     
     
-    # * ----- OPTIONAL - TESTING UPDATE CATEGORY ROUTE ----- *
+    # * ----- OPTIONAL - TESTING UPDATE CATEGORY ROUTE - INCOMPLETE FUNCTIONALITY ----- *
     """ 
     # @TODO: Implement below functions on the init - app py file.
     def test_update_category_type(self):
@@ -111,10 +113,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'bad request')
      """
-    # * ----- OPTIONAL - END OF TESTING UPDATE CATEGORY ROUTE ----- *
+    # * ----- OPTIONAL - END OF TESTING UPDATE CATEGORY ROUTE  ----- *
     
     
-    # * ----- OPTIONAL - TESTING UPDATE QUESTION ROUTE ----- *
+    # * ----- OPTIONAL - TESTING UPDATE QUESTION ROUTE - INCOMPLETE FUNCTIONALITY----- *
     """ 
     # @TODO: Implement below functions on the init - app py file.
      def test_update_question_fields(self):
@@ -142,26 +144,26 @@ class TriviaTestCase(unittest.TestCase):
         
     # * ----- TESTING DELETE QUESTION ROUTE ----- *
 
-    def test_delete_question(self):
-        res = self.client().delete('/questions/5')
-        data = json.loads(res.data)
+    # def test_delete_question(self):
+    #     res = self.client().delete('/questions/2')
+    #     data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == 5).one_or_none()
+    #     question = Question.query.filter(Question.id == 2).one_or_none()
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(data['deleted'], 5)
-        self.assertTrue(data['questions'])
-        self.assertTrue(data['total_questions'])
-        self.assertEqual(question, None)
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+    #     self.assertEqual(data['deleted'], 2)
+    #     self.assertTrue(data['questions'])
+    #     self.assertTrue(data['total_questions'])
+    #     self.assertEqual(question, None)
         
-    def test_422_if_question_to_delete_does_not_exist(self):
-        res = self.client().delete('/questions/1000')
-        data = json.loads(res.data)
+    # def test_422_if_question_to_delete_does_not_exist(self):
+    #     res = self.client().delete('/questions/1000')
+    #     data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unprocessable')
+    #     self.assertEqual(res.status_code, 422)
+    #     self.assertEqual(data['success'], False)
+    #     self.assertEqual(data['message'], 'unprocessable')
     
     # * ----- END OF TESTING DELETE QUESTION ROUTE ----- *
     
@@ -199,8 +201,9 @@ class TriviaTestCase(unittest.TestCase):
     # * ----- END OF TESTING CREATE QUESTION ROUTE ----- *
     
     
-    # * ----- TESTING CREATE CATEGORY ROUTE ----- *
+    # * ----- OPTIOANL -TESTING CREATE CATEGORY ROUTE - INCOMPLETE FUNCTIONALITY ----- *
     
+    """  
     def test_create_new_category(self):
         res = self.client().post('/categories', json=self.new_category)
         data = json.loads(res.data)
@@ -220,14 +223,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
     
         #optional 405 test
-    """ ## ! NOT WORKING - RETURNS 404 FOR SOME REASON
+    ## ! NOT WORKING - RETURNS 404 FOR SOME REASON
     def test_405_if_category_creation_method_not_allowed(self):
         res = self.client().post('/categories/1000', json=self.new_category)
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'method not allowed') """
+        self.assertEqual(data['message'], 'method not allowed') 
+    """
     
     # * ----- END OF TESTING CREATE CATEGORY ROUTE ----- *
     
@@ -265,7 +269,7 @@ class TriviaTestCase(unittest.TestCase):
     # * ----- TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
     
     def test_200_get_category_based_question(self):
-        res = self.client().get('/questions/categories/5')
+        res = self.client().get('/categories/5/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -275,7 +279,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_404_sent_requesting_beyond_valid_page_category_based_questions(self):
         #res = self.client().get('/questions?page=1000', json={'difficulty': 1})
-        res = self.client().get('/questions/categories/5?page=1000')
+        res = self.client().get('/categories/5/questions?page=1000')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -283,7 +287,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'resource or url not found')
         
     def test_422_invalid_category_based_question(self):
-        res = self.client().get('/questions/categories/1000')
+        res = self.client().get('/categories/1000/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
