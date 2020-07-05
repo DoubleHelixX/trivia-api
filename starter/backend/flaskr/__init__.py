@@ -200,22 +200,23 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
   
-  @app.route('/questions/search', methods=['GET'])
+  @app.route('/questions/search', methods=['POST'])
   def retrieve_searched_based_questions():
     try:
       body = request.get_json()
-      search = body.get('search', None)
+      search = body.get('searchTerm', None)
       
       selection = Question.query.filter(Question.question.ilike('%{}%'.format(search)))
       current_questions = paginate_questions(request, selection)
-
+      
       if (len(selection.all()) !=0 and len(current_questions) == 0):
         abort(404) 
-    
+      
       return jsonify({
         'success': True,
         'questions': current_questions,
-        'total_questions': len(selection.all())
+        'total_questions': len(selection.all()),
+        'current_category': None 
       })
     except:
       abort(422)
