@@ -294,7 +294,7 @@ def create_app(test_config=None):
       question = 0
     if len(questions) == 0 and len(previous_questions) == 0:
       abort(422)
-    else:
+    if len(questions):
       #print('questions before format: ' , questions, 'length of questions: ', len(questions)) #! Troubleshooting code
       question = questions[0].format()
       #print('length of question', len(question), ' question contents: ' , question, ' question ID: ' , question['id']) #! Troubleshooting code
