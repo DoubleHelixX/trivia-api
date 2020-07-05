@@ -88,9 +88,7 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['GET'])
   def retrieve_questions():
     categories = Category.query.order_by(Category.id).all()
-    types =[]
-    for c in categories:
-      types.append(c.type)
+    types = {cat.id:cat.type for cat in categories}
     randomCategory = str( random.randint(1, len(categories)))
     questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
     current_questions = paginate_questions(request, questions)
@@ -103,7 +101,7 @@ def create_app(test_config=None):
       'questions': current_questions,
       'total_questions': len(questions),
       'categories': types,
-      'currentCategory': 'Science'
+      'currentCategory': questions[0].category
     })
 
 
@@ -234,10 +232,10 @@ def create_app(test_config=None):
   category to be shown. 
   '''
   #could also write this in the first questions get endpoint as a JSON body or as a Args request
-  @app.route('/categories/<string:category>/questions', methods=['GET'])
-  def retrieve_category_based_questions(category):
-  
-    selection = Question.query.filter(Question.category == category).order_by(Question.id).all()     
+  @app.route('/categories/<category_id>/questions', methods=['GET'])
+  def retrieve_category_based_questions(category_id):
+    #category_id= int(category_id)+1
+    selection = Question.query.filter(Question.category == category_id).order_by(Question.id).all()     
     
     if not selection: abort(422)
     
