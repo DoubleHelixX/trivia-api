@@ -91,17 +91,18 @@ def create_app(test_config=None):
     randomCategory = str( random.randint(1, len(categories)))
     questions = Question.query.order_by(Question.id).all()
     
-    #* - OPTIONAL - RANDOM FUNCTIONALITY FOR QUESTIONS VIEW  - RANDOMIZES QUESTIONS ON REFRESH
+    ## * - OPTIONAL - RANDOM FUNCTIONALITY FOR QUESTIONS VIEW  - RANDOMIZES QUESTIONS ON REFRESH
     #questions = Question.query.filter(Question.category==randomCategory).order_by(Question.id).all()
     #questions = Question.query.order_by(func.random()).all()
-    
+    ## * - - - - - -
     current_questions = paginate_questions(request, questions)
     
     if len(current_questions)==0:
       abort(404)  
     
     for category in categories:
-       if category.id==questions[0].category:
+      #print('troubleshoot: ', categories, category.id , ' ', questions[0].category, str (category.id) == str (questions[0].category) ) # !Troubleshooting code
+      if str (category.id) == str (questions[0].category):
         currentCategory = category.type 
          
     return jsonify({
