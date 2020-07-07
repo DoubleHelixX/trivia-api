@@ -20,13 +20,13 @@ class TriviaTestCase(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.new_question = {
-            'question': 'How much wood can a wood chuck chuck?',
-            'answer': 'depends on his dentist bill',
+            "question": "How much wood can a wood chuck chuck?",
+            "answer": "depends on his dentist bill",
             "category" : "3", 
-            'difficulty': 5
+            "difficulty": 5
         }
         self.new_category = {
-            'type' : "Animals"
+            "type" : "Animals"
         }
         
         
@@ -156,14 +156,14 @@ class TriviaTestCase(unittest.TestCase):
     # * ----- TESTING DELETE QUESTION ROUTE ----- *
 
     def test_delete_question(self):
-        res = self.client().delete('/questions/2')
+        res = self.client().delete('/questions/5')
         data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == 2).one_or_none()
+        question = Question.query.filter(Question.id == 5).one_or_none()
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['deleted'], 2)
+        self.assertEqual(data['deleted'], 5)
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
         self.assertEqual(question, None)
@@ -196,7 +196,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['created'])
-        self.assertTrue(data['questions'])
+        self.assertTrue(data['question'])
         self.assertTrue(data['total_questions'])
         
     def test_422_if_question_creation_fails(self):
@@ -257,7 +257,7 @@ class TriviaTestCase(unittest.TestCase):
     
     # * ----- TESTING SEARCH QUESTION ROUTE ----- *
     def test_200_get_question_search_with_results(self):
-        res = self.client().post('/questions/search', json={'searchTerm': 'title'})
+        res = self.client().post('/questions/search', json={"searchTerm": "title"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -266,7 +266,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(len(data['questions']), 2)
 
     def test_200_get_questions_search_without_results(self):
-        res = self.client().post('/questions/search', json={'searchTerm': 'WaterBallons'})
+        res = self.client().post('/questions/search', json={"searchTerm": "WaterBallons"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -283,7 +283,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'unprocessable')
         
     def test_405_search_questions_method_not_allowed(self):
-        res = self.client().patch('/questions/search', json={'searchTerm': 'title'})
+        res = self.client().patch('/questions/search', json={"searchTerm": "title"})
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 405)

@@ -77,161 +77,311 @@ The API will return three error types when requests fail:
 - 400: Bad Request
 - 404: Resource Not Found
 - 422: Not Processable 
+- 405: Method not allowed
+- 500: Something is wrong with the server configuration
 
 ### Endpoints 
-#### GET /books
+#### GET /categories
 - General:
-    - Returns a list of book objects, success value, and total number of books
-    - Results are paginated in groups of 8. Include a request argument to choose page number, starting from 1. 
-- Sample: `curl http://127.0.0.1:5000/books`
+    - Returns a list of Category objects, success value, and total number of categories
+- Sample: `curl http://127.0.0.1:5000/categories`
 
 ``` {
-  "books": [
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "success": true,
+  "total_categories": 6
+}
+```
+#### GET /questions
+- General:
+    - Returns a list of Question objects, success value, and total number of categories
+    - Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1. 
+- Sample1: `curl http://127.0.0.1:5000/questions`, Sample 2 `curl http://127.0.0.1:5000/questions?page=2`, Sample 3 Etc
+
+- Sample1:
+``` {
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "currentCategory": "Entertainment",
+  "questions": [
     {
-      "author": "Stephen King",
-      "id": 1,
-      "rating": 5,
-      "title": "The Outsider: A Novel"
-    },
-    {
-      "author": "Lisa Halliday",
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
       "id": 2,
-      "rating": 5,
-      "title": "Asymmetry: A Novel"
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
     },
     {
-      "author": "Kristin Hannah",
-      "id": 3,
-      "rating": 5,
-      "title": "The Great Alone"
-    },
-    {
-      "author": "Tara Westover",
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
       "id": 4,
-      "rating": 5,
-      "title": "Educated: A Memoir"
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
     },
     {
-      "author": "Jojo Moyes",
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
       "id": 5,
-      "rating": 5,
-      "title": "Still Me: A Novel"
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
     },
     {
-      "author": "Leila Slimani",
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
       "id": 6,
-      "rating": 5,
-      "title": "Lullaby"
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
     },
     {
-      "author": "Amitava Kumar",
-      "id": 7,
-      "rating": 5,
-      "title": "Immigrant, Montana"
-    },
-    {
-      "author": "Madeline Miller",
-      "id": 8,
-      "rating": 5,
-      "title": "CIRCE"
-    }
-  ],
-"success": true,
-"total_books": 18
-}
-```
-
-#### POST /books
-- General:
-    - Creates a new book using the submitted title, author and rating. Returns the id of the created book, success value, total books, and book list based on current page number to update the frontend. 
-- `curl http://127.0.0.1:5000/books?page=3 -X POST -H "Content-Type: application/json" -d '{"title":"Neverwhere", "author":"Neil Gaiman", "rating":"5"}'`
-```
-{
-  "books": [
-    {
-      "author": "Neil Gaiman",
-      "id": 24,
-      "rating": 5,
-      "title": "Neverwhere"
-    }
-  ],
-  "created": 24,
-  "success": true,
-  "total_books": 17
-}
-```
-#### DELETE /books/{book_id}
-- General:
-    - Deletes the book of the given ID if it exists. Returns the id of the deleted book, success value, total books, and book list based on current page number to update the frontend. 
-- `curl -X DELETE http://127.0.0.1:5000/books/16?page=2`
-```
-{
-  "books": [
-    {
-      "author": "Gina Apostol",
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
       "id": 9,
-      "rating": 5,
-      "title": "Insurrecto: A Novel"
+      "question": "What boxer's original name is Cassius Clay?"
     },
     {
-      "author": "Tayari Jones",
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
       "id": 10,
-      "rating": 5,
-      "title": "An American Marriage"
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
     },
     {
-      "author": "Jordan B. Peterson",
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
       "id": 11,
-      "rating": 5,
-      "title": "12 Rules for Life: An Antidote to Chaos"
+      "question": "Which country won the first ever soccer World Cup in 1930?"
     },
     {
-      "author": "Kiese Laymon",
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
       "id": 12,
-      "rating": 1,
-      "title": "Heavy: An American Memoir"
+      "question": "Who invented Peanut Butter?"
     },
     {
-      "author": "Emily Giffin",
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
       "id": 13,
-      "rating": 4,
-      "title": "All We Ever Wanted"
+      "question": "What is the largest lake in Africa?"
     },
     {
-      "author": "Jose Andres",
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
       "id": 14,
-      "rating": 4,
-      "title": "We Fed an Island"
-    },
-    {
-      "author": "Rachel Kushner",
-      "id": 15,
-      "rating": 1,
-      "title": "The Mars Room"
+      "question": "In which royal palace would you find the Hall of Mirrors?"
     }
   ],
-  "deleted": 16,
   "success": true,
-  "total_books": 15
-}
-```
-#### PATCH /books/{book_id}
-- General:
-    - If provided, updates the rating of the specified book. Returns the success value and id of the modified book. 
-- `curl http://127.0.0.1:5000/books/15 -X PATCH -H "Content-Type: application/json" -d '{"rating":"1"}'`
-```
-{
-  "id": 15,
-  "success": true
+  "total_questions": 19
 }
 ```
 
+#### POST /questions
+- General:
+    - Creates a new question using the submitted questions, answer, category, and difficulty. Returns the id of the created question, success value, total questions, and the created questions data. 
+- `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d 
+        '{
+            "question": "How much wood can a wood chuck chuck?",
+            "answer": "depends on his dentist bill",
+            "category" : "3", 
+            "difficulty": 5
+        }'`
+```
+{
+  "created": 24,
+  "question": {
+    "answer": "depends on his dentist bill",
+    "category": 3,
+    "difficulty": 5,
+    "id": 24,
+    "question": "How much wood can a wood chuck chuck?"
+  },
+  "success": true,
+  "total_questions": 21
+}
+```
+#### DELETE /questions/<int:question_id>
+- General:
+    - Deletes the question of the given ID if it exists. Returns the id of the deleted question, success value, total questions, and questions list based on current page number to update the frontend. 
+- `curl -X DELETE http://127.0.0.1:5000/questions/2`
+```
+{
+  "deleted": 2,
+  "questions": [
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    },
+    {
+      "answer": "Agra",
+      "category": 3,
+      "difficulty": 2,
+      "id": 15,
+      "question": "The Taj Mahal is located in which Indian city?"
+    }
+  ],
+  "success": true,
+  "total_questions": 20
+}
+```
+#### POST /questions/search
+- General:
+    - Gets a list of questions that match the search term provided within the JSON object. Returns the current_category of the listed questions which returns null if its multiple, the success value, the search term related questions data, and the total length of questions that matched the search term.
+- `curl http://127.0.0.1:5000/questions/search -X POST -H "Content-Type: application/json" -d 
+        '{"searchTerm": "title"}'`
+```
+{
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    }
+  ],
+  "success": true,
+  "total_questions": 2
+}
+```
+#### GET /categories/<string:category_id>/questions
+- General:
+    - Gets a list of questions based on the given category id. Returns the current_category of the listed questions, the data of the questions from that category , the success value, and the total length of questions within that category.
+- `curl http://127.0.0.1:5000/categories/5/questions`
+```
+{
+  "current_category": 5,
+  "questions": [
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    }
+  ],
+  "success": true,
+  "total_questions": 2
+}
+```
+#### POST /questions/quiz
+- General:
+    - Starts the quiz game - Gets a random-sorted list of questions that match the chosen category the user selects that is passed via within the JSON object if and only if it isn't a previous question by comparing the previous_questions array within the JSON object to the possible returned questions. Returns an updated previous questions list of IDs, the returning question data for the user to guess upon, the success value, and finally the total questions available in total for that given category. 
+- `curl http://127.0.0.1:5000/questions/quiz -X POST -H "Content-Type: application/json" -d 
+        '{"quiz_category": {"type": "Entertainment", "id" : 5}}'`
+```
+{
+  "previous_questions": [
+    6
+  ],
+  "question": {
+    "answer": "Edward Scissorhands",
+    "category": 5,
+    "difficulty": 3,
+    "id": 6,
+    "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+  },
+  "success": true,
+  "total_questions": 2
+}
+```
 
 ## Deployment N/A
 
 ## Authors
-Yours truly, Coach Caryn 
+Yours truly, Thomas Rivera
 
 ## Acknowledgements 
-The awesome team at Udacity and all of the students, soon to be full stack extraordinaires! 
+The awesome team at Udacity including Coach Caryn !
 

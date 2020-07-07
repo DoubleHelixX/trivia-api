@@ -171,11 +171,11 @@ def create_app(test_config=None):
       
       questions = Question.query.order_by(Question.id).all()
       current_questions = [question.format() for question in questions]
-
+      lastIndex = len(current_questions)-1
       return jsonify({
       'success': True,
       'created': question.id,
-      'questions': current_questions,
+      'question': current_questions[lastIndex],
       'total_questions': len(Question.query.all())
       })
     except:
@@ -249,7 +249,7 @@ def create_app(test_config=None):
   category to be shown. 
   '''
   #could also write this in the first questions get endpoint as a JSON body or as a Args request
-  @app.route('/categories/<category_id>/questions', methods=['GET'])
+  @app.route('/categories/<string:category_id>/questions', methods=['GET'])
   def retrieve_category_based_questions(category_id):
     if request.method != 'GET': abort(405)
     
