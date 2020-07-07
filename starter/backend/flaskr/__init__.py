@@ -60,6 +60,7 @@ def create_app(test_config=None):
   
   @app.route('/categories', methods=['GET'])
   def retrieve_categories():
+    if request.method != 'GET': abort(405)    
     categories = Category.query.order_by(Category.id).all()
    
     current_categories = {cat.id:cat.type for cat in categories}
@@ -86,6 +87,7 @@ def create_app(test_config=None):
   '''
   @app.route('/questions', methods=['GET'])
   def retrieve_questions():
+    if request.method != 'GET': abort(405)    
     categories = Category.query.order_by(Category.id).all()
     types = {cat.id:cat.type for cat in categories}
     randomCategory = str( random.randint(1, len(categories)))
@@ -124,6 +126,7 @@ def create_app(test_config=None):
   
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
+    if request.method != 'DELETE': abort(405)    
     try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
       question.delete()
@@ -151,6 +154,7 @@ def create_app(test_config=None):
   '''
   @app.route('/questions', methods=['POST'])
   def create_question():
+    if request.method != 'POST': abort(405)    
     body = request.get_json()
 
     new_question = body.get('question', None)
@@ -213,6 +217,7 @@ def create_app(test_config=None):
   
   @app.route('/questions/search', methods=['POST'])
   def retrieve_searched_based_questions():
+    if request.method != 'POST': abort(405)    
     try:
       body = request.get_json()
       search = body.get('searchTerm', None)
@@ -245,6 +250,8 @@ def create_app(test_config=None):
   #could also write this in the first questions get endpoint as a JSON body or as a Args request
   @app.route('/categories/<category_id>/questions', methods=['GET'])
   def retrieve_category_based_questions(category_id):
+    if request.method != 'GET': abort(405)
+    
     #category_id= int(category_id)+1
     selection = Question.query.filter(Question.category == category_id).order_by(Question.id).all()     
     
@@ -280,6 +287,8 @@ def create_app(test_config=None):
   @app.route('/questions/quiz', methods=['POST'])
   def retrieve_quiz_questions():
     
+    if request.method != 'POST': abort(405)
+
     body = request.get_json()
     previous_questions = body.get('previous_questions', [])
     category= body.get('quiz_category' , {"type": "click", "id" : 0})
