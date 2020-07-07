@@ -60,18 +60,19 @@ def create_app(test_config=None):
   
   @app.route('/categories', methods=['GET'])
   def retrieve_categories():
-    if request.method != 'GET': abort(405)    
-    categories = Category.query.order_by(Category.id).all()
-   
-    current_categories = {cat.id:cat.type for cat in categories}
-    if len(current_categories) == 0:
-      abort(404)  
+    try:
+      if request.method != 'GET': abort(405)    
+      categories = Category.query.order_by(Category.id).all()
+        
+      current_categories = {cat.id:cat.type for cat in categories}
 
-    return jsonify({
-      'success': True,
-      'categories': current_categories,
-      'total_categories': len(Category.query.all())
-    })
+      return jsonify({
+        'success': True,
+        'categories': current_categories,
+        'total_categories': len(Category.query.all())
+      })
+    except expression as identifier:
+      abort(422)
 
   '''
   @TODO: 

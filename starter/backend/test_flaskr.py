@@ -72,7 +72,7 @@ class TriviaTestCase(unittest.TestCase):
     
     # * ----- TESTING GET/PAGINATION ON CATEGORIES ROUTE ----- *
     
-    def test_get_paginated_categories(self):
+    def test_200_get_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
 
@@ -80,6 +80,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['total_categories'])
         self.assertTrue(len(data['categories']))
+        
+    def test_405_get_categories_wrong_method(self):
+        res = self.client().post('/categories')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
         
     ## ! OPTIONAL PAGINATION - ONLY WORKS IF CATEGORIES REQUIRED PAGINATION 
     """ 
@@ -167,6 +175,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
+        
+    def test_405_delete_question_wrong_method(self):
+        res = self.client().post('/questions/2')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
     
     # * ----- END OF TESTING DELETE QUESTION ROUTE ----- *
     
@@ -193,7 +209,7 @@ class TriviaTestCase(unittest.TestCase):
         
         #Optional 405 testing
     def test_405_if_question_creation_method_not_allowed(self):
-        res = self.client().post('/questions/45', json=self.new_question)
+        res = self.client().patch('/questions/45', json=self.new_question)
         data = json.loads(res.data)
         
         self.assertEqual(res.status_code, 405)
@@ -266,10 +282,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
         
+    def test_405_search_questions_method_not_allowed(self):
+        res = self.client().patch('/questions/search', json={'searchTerm': 'title'})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
+        
     # * ----- END OF TESTING SEARCH QUESTION ROUTE ----- *
 
 
-    # * ----- TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
+    # * ----- TESTING GET QUESTION BASED CATEGORY ROUTE ----- *
     
     def test_200_get_category_based_question(self):
         res = self.client().get('/categories/5/questions')
@@ -296,6 +320,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
+        
+    def test_405_get_category_based_question_method_not_allowed(self):
+        res = self.client().patch('/categories/5/questions')
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
     
     # * ----- END OF TESTING SEARCH QUESTION BASED CATEGORY ROUTE ----- *
     
@@ -339,6 +371,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'unprocessable')
+        
+    def test_405_quiz_questions_method_not_allowed(self):
+        res = self.client().patch('/questions/quiz', json = {'previous_questions':[4], "quiz_category": {"type": "Entertainment", "id" : 5}})
+        data = json.loads(res.data)
+        
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
         
     ## ! OPTIOANL PAGINATION TEST FOR CATEGORIES ONLY WORKS WITH GET METHOD BUT FRONEND IS USING POST
     """ 
