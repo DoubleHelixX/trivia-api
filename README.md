@@ -103,9 +103,9 @@ The API will return three error types when requests fail:
 - General:
     - Returns a list of Question objects, success value, and total number of categories
     - Results are paginated in groups of 10. Include a request argument to choose page number, starting from 1. 
-- Sample1: `curl http://127.0.0.1:5000/questions`, Sample 2 `curl http://127.0.0.1:5000/questions?page=2`, Sample 3 Etc
+- Sample 1: `curl http://127.0.0.1:5000/questions`, Sample 2 `curl http://127.0.0.1:5000/questions?page=2`, Sample 3 Etc
 
-- Sample1:
+- Sample 1:
 ``` {
   "categories": {
     "1": "Science",
